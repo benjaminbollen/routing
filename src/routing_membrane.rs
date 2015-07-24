@@ -102,9 +102,9 @@ pub struct RoutingMembrane<F : Interface> {
     refresh_accumulator: RefreshAccumulator,
     // for Persona logic
     interface: Box<F>,
-    put_response_sentinel: PureSentinel<SentinelPutResponse, NameType>,
-    get_data_response_sentinel: PureSentinel<SentinelGetDataResponse, NameType>,
-    put_sentinel: PureSentinel<SentinelPutRequest, NameType>
+    // put_response_sentinel: PureSentinel<SentinelPutResponse, NameType>,
+    // get_data_response_sentinel: PureSentinel<SentinelGetDataResponse, NameType>,
+    // put_sentinel: PureSentinel<SentinelPutRequest, NameType>
 }
 
 impl<F> RoutingMembrane<F> where F: Interface {
@@ -132,9 +132,9 @@ impl<F> RoutingMembrane<F> where F: Interface {
             connection_cache: BTreeMap::new(),
             refresh_accumulator: RefreshAccumulator::new(),
             interface : Box::new(personas),
-            put_response_sentinel: PureSentinel::new(),
-            get_data_response_sentinel: PureSentinel::new(),
-            put_sentinel: PureSentinel::new()
+            // put_response_sentinel: PureSentinel::new(),
+            // get_data_response_sentinel: PureSentinel::new(),
+            // put_sentinel: PureSentinel::new()
         }
     }
 
@@ -701,25 +701,6 @@ impl<F> RoutingMembrane<F> where F: Interface {
             // if routing table size is zero any target is in range, so no need to check
             self.send_reflective_to_us(msg)
         }
-
-        // TODO(ben 24/07/2015) this can be removed. It is also not "wrong" but the crux
-        // of the rust-2 routing refactor was clearly separating the genuine routing network
-        // from bootstrap noise, so if such a functionality is needed, then it should go in
-        // a very explicit function.
-        // else {
-        //     match self.bootstrap {
-        //         Some((ref bootstrap_endpoint, _)) => {
-        //
-        //             let msg = try!(SignedMessage::new(msg, &self.id.signing_private_key()));
-        //             let msg = try!(encode(&msg));
-        //
-        //             match self.connection_manager.send(bootstrap_endpoint.clone(), msg) {
-        //                 Ok(_)  => Ok(()),
-        //                 Err(e) => Err(RoutingError::Io(e))
-        //             }},
-        //         None => Err(RoutingError::FailedToBootstrap)
-        //     }
-        // }
     }
 
     // When we swarm a message, we are also part of the effective close group.
@@ -1195,19 +1176,21 @@ impl<F> RoutingMembrane<F> where F: Interface {
             quorum = self.routing_table.size();
         }
 
-        let resolved = match self.put_response_sentinel.add_claim(
-            SentinelPutResponse::new(message.clone(), response.clone(), our_authority.clone()),
-            source, signed_message.signature().clone(),
-            signed_message.encoded_body().clone(), quorum, quorum) {
-                Some(result) =>  match  result {
-                    AddResult::RequestKeys(_) => {
-                        // Get Key Request
-                        return Ok(())
-                    },
-                    AddResult::Resolved(request, serialised_claim) => (request, serialised_claim)
-                },
-                None => return Ok(())
-        };
+        let resolved = (SentinelPutResponse::new(message.clone(),
+            response.clone(), our_authority.clone()), true);
+        // let resolved = match self.put_response_sentinel.add_claim(
+        //     SentinelPutResponse::new(message.clone(), response.clone(), our_authority.clone()),
+        //     source, signed_message.signature().clone(),
+        //     signed_message.encoded_body().clone(), quorum, quorum) {
+        //         Some(result) =>  match  result {
+        //             AddResult::RequestKeys(_) => {
+        //                 // Get Key Request
+        //                 return Ok(())
+        //             },
+        //             AddResult::Resolved(request, serialised_claim) => (request, serialised_claim)
+        //         },
+        //         None => return Ok(())
+        // };
 
         for method_call in self.mut_interface().handle_put_response(from_authority, from, response.error.clone()) {
             match method_call {
