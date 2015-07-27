@@ -282,9 +282,16 @@ impl SignedMessage {
     }
 
     pub fn verify_signature(&self, public_sign_key: &sign::PublicKey) -> bool {
-        sign::verify_detached(&self.signature,
-                              &self.encoded_body,
-                              &public_sign_key)
+        // sign::verify_detached(&self.signature,
+        //                       &self.encoded_body,
+        //                       &public_sign_key)
+        // FIXME(ben 27/07/2015) This is AN EXTREMELY TEMPORARY PATCH
+        // RoutingNode needs to learn the name of the relay node,
+        // such that it can fill in this name when sending messages; and signing them
+        // to ensure correct routing behaviour the relay node temporarily patch the source
+        // address.  This is a problem as the original signature is invalidated.
+        // That's the reason to commit temporary herecy here, and always validate any signature.
+        true
     }
 
     pub fn get_routing_message(&self) -> Result<RoutingMessage, CborError> {
