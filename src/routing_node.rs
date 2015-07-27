@@ -90,10 +90,12 @@ impl<F, G> RoutingNode<F, G> where F : Interface + 'static,
         let mut cm = crust::ConnectionManager::new(event_output.clone());
         let _ = cm.start_accepting(vec![]);
         cm.bootstrap(MAX_BOOTSTRAP_CONNECTIONS);
+        println!("Starting Node Loop");
         loop {
             match event_input.recv() {
                 Err(_) => return Err(RoutingError::FailedToBootstrap),
                 Ok(crust::Event::NewMessage(endpoint, bytes)) => {
+                    println!("Received message from CRUST in RoutingNode on {:?}", endpoint);
                     match self.bootstrap {
                         Some((ref bootstrap_endpoint, _)) => {
                             debug_assert!(&endpoint == bootstrap_endpoint);
@@ -127,19 +129,23 @@ impl<F, G> RoutingNode<F, G> where F : Interface + 'static,
                     if possible_first {
                         // break from listening to CM
                         // and first start RoutingMembrane
+                        println!("New Connection on {:?}, we are becoming first", endpoint);
                         relocated_name = Some(NameType(sodiumoxide::crypto::hash::sha512
                             ::hash(&self.id.name().0).0));
                         break;
                     } else {
-                        // aggressively refuse a connection when we already have
-                        // and drop it.
+                        println!("New Connection on {:?}, but we already
+                            have a bootstrap connection, so dropping this endpoint.", endpoint);
+                        // aggressively refuse a connection when we already have a bootstrap
+                        // connection and drop this new connection.
                         cm.drop_node(endpoint);
                     }
                 },
                 Ok(crust::Event::LostConnection(_endpoint)) => {
-
+                    println!("Lost connection on {:?}", _endpoint);
                 },
                 Ok(crust::Event::NewBootstrapConnection(endpoint)) => {
+                    println!("New Bootstrap connection on {:?}", endpoint);
                     match self.bootstrap {
                         None => {
                             // we found a bootstrap connection,
