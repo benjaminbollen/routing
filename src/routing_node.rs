@@ -169,6 +169,7 @@ impl<F, G> RoutingNode<F, G> where F : Interface + 'static,
             }
         }
 
+        println!("ready to start membrane with relocated name {:?}.", relocated_name);
         match relocated_name {
             Some(new_name) => {
                 self.id.assign_relocated_name(new_name);
@@ -178,6 +179,7 @@ impl<F, G> RoutingNode<F, G> where F : Interface + 'static,
                     self.genesis.create_personas());
                 // TODO: currently terminated by main, should be signalable to terminate
                 // and join the routing_node thread.
+                println!("Spawning thread");
                 spawn(move || membrane.run());
             },
             None => { return Err(RoutingError::FailedToBootstrap); }
