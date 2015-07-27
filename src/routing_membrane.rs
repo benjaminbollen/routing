@@ -220,7 +220,7 @@ impl<F> RoutingMembrane<F> where F: Interface {
                 // should never happen
                 if self.routing_table.size() == 0 {
                     // only for a self-relocated node is this a normal situation.
-                    if !self.id.is_self_relocated() {
+                    if !self.id.is_relocated() {
                         panic!("No connections to get started.");
                     }
                 }
