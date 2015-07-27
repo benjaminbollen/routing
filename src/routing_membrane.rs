@@ -1574,19 +1574,21 @@ impl<F> RoutingMembrane<F> where F: Interface {
             quorum = self.routing_table.size();
         }
 
-        let resolved = match self.get_data_response_sentinel.add_claim(
-            SentinelGetDataResponse::new(message.clone(), response.clone(), our_authority.clone()),
-            source, signed_message.signature().clone(),
-            signed_message.encoded_body().clone(), quorum, quorum) {
-                Some(result) =>  match  result {
-                    AddResult::RequestKeys(_) => {
-                        // Get Key Request
-                        return Ok(())
-                    },
-                    AddResult::Resolved(request, serialised_claim) => (request, serialised_claim)
-                },
-                None => return Ok(())
-        };
+        let resolved = (SentinelGetDataResponse::new(message.clone(), response.clone(),
+            our_authority.clone()), true);
+        // let resolved = match self.get_data_response_sentinel.add_claim(
+        //     SentinelGetDataResponse::new(message.clone(), response.clone(), our_authority.clone()),
+        //     source, signed_message.signature().clone(),
+        //     signed_message.encoded_body().clone(), quorum, quorum) {
+        //         Some(result) =>  match  result {
+        //             AddResult::RequestKeys(_) => {
+        //                 // Get Key Request
+        //                 return Ok(())
+        //             },
+        //             AddResult::Resolved(request, serialised_claim) => (request, serialised_claim)
+        //         },
+        //         None => return Ok(())
+        // };
 
         for method_call in self.mut_interface().handle_get_response(from, response.data.clone()) {
             match method_call {
