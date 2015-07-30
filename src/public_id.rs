@@ -20,7 +20,7 @@ use rustc_serialize::{Decoder, Encodable, Encoder};
 use sodiumoxide::crypto::sign;
 use sodiumoxide::crypto::box_;
 use NameType;
-use error::{RoutingError};
+use error::RoutingError;
 use id::Id;
 use utils;
 

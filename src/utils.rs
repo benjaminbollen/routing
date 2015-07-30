@@ -21,7 +21,7 @@ use sodiumoxide::crypto;
 use std::cmp;
 use NameType;
 use name_type::closer_to_target;
-use error::{RoutingError};
+use error::RoutingError;
 
 use rustc_serialize::{Decodable, Encodable};
 

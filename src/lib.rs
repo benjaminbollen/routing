@@ -32,8 +32,15 @@
        html_favicon_url = "http://maidsafe.net/img/favicon.ico",
        html_root_url = "http://maidsafe.github.io/routing")]
 // #![warn(missing_docs)]
-#![deny(dead_code, unused_variables, unused_features, unused_attributes)]
 #![forbid(bad_style, warnings)]
+#![deny(dead_code, unused_variables, deprecated, drop_with_repr_extern, improper_ctypes,
+        missing_docs, non_shorthand_field_patterns, overflowing_literals, plugin_as_library,
+        private_no_mangle_fns, private_no_mangle_statics, raw_pointer_derive, stable_features,
+        unconditional_recursion, unknown_lints, unsafe_code, unsigned_negation, unused,
+        unused_allocation, unused_attributes, unused_comparisons, unused_features, unused_parens,
+        while_true)]
+#![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
+        unused_qualifications, unused_results, variant_size_differences)]
 
 #[macro_use]
 extern crate log;

@@ -81,6 +81,7 @@ impl Encodable for ResponseError {
 
 impl Decodable for ResponseError {
     fn decode<D: Decoder>(d: &mut D)->Result<ResponseError, D::Error> {
+        #[allow(unused_results)]
         try!(d.read_u64());
         // let mut type_tag : String;
         // // let mut data : Option<Vec<u8>>;
@@ -123,7 +124,7 @@ impl error::Error for InterfaceError {
 
     fn cause(&self) -> Option<&error::Error> {
         match *self {
-            InterfaceError::Response(ref err) => Some(err as &error::Error),
+            InterfaceError::Response(ref err) => Some(err),
             _ => None,
         }
     }
@@ -243,10 +244,10 @@ impl error::Error for RoutingError {
 
     fn cause(&self) -> Option<&error::Error> {
         match *self {
-            RoutingError::Interface(ref err) => Some(err as &error::Error),
-            RoutingError::Io(ref err) => Some(err as &error::Error),
+            RoutingError::Interface(ref err) => Some(err),
+            RoutingError::Io(ref err) => Some(err),
             // RoutingError::Cbor(ref err) => Some(err as &error::Error),
-            RoutingError::Response(ref err) => Some(err as &error::Error),
+            RoutingError::Response(ref err) => Some(err),
             _ => None,
         }
     }
