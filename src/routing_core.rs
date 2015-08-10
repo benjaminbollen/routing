@@ -243,4 +243,8 @@ impl RoutingCore {
             None => false,
         }
     }
+
+    pub fn is_my_address(&self, address: &Address) -> bool {
+        unimplemented!()
+    }
 }
