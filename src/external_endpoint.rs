@@ -15,20 +15,9 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use crust::Endpoint;
+/// External endpoint accumulates the endpoints as seen by nodes we are connected to
+/// and constructs possible external endpoints for our listening port.
 
-use rustc_serialize::{Decoder, Encodable, Encoder};
-use public_id::PublicId;
-use types::Address;
-
-#[derive(Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
-pub struct Hello {
-    pub address              : Address,
-    pub public_id            : PublicId,
-    pub your_public_endpoint : Endpoint,
-}
-
-#[cfg(test)]
-mod test {
-    // TODO: add validation test
+pub struct ExternalEndpoints {
+    
 }
