@@ -23,7 +23,7 @@ pub struct ExpirationMap<K, V> {
 }
 
 #[allow(unused)] // remove when an ExpirationMap has been included elsewhere in the code
-impl<K, V> ExpirationMap<K, V> where K: PartialOrd + Ord + Clone, V: Clone {
+impl<K, V> ExpirationMap<K, V> where K: PartialOrd + Ord + Clone {
     /// Constructor
     pub fn with_expiry_duration(time_to_live: ::time::Duration) -> ExpirationMap<K, V> {
         ExpirationMap {
@@ -78,22 +78,24 @@ impl<K, V> ExpirationMap<K, V> where K: PartialOrd + Ord + Clone, V: Clone {
 
     /// Recover expired key-value pairs removing any such from the map.
     pub fn remove_expired(&mut self) -> Vec<(K,V)> {
-        let mut expired = Vec::new();
+        let mut expired_keys = Vec::new();
+        let mut expired_entries = Vec::new();
         let now = ::time::SteadyTime::now();
 
         for (key, &(ref value, time)) in self.map.iter() {
             if time + self.time_to_live < now {
-                expired.push((key.clone(), value.clone()));
-            }
-        }
+                expired_keys.push(key.clone()); };
+        };
 
-        if expired.len() > 0 {
-            for key_value in expired.clone() {
-                let _ = self.map.remove(&key_value.0);
-            }
-        }
-
-        return expired;
+        for key in expired_keys {
+            match self.map.remove(&key) {
+                Some((value, _)) => {
+                    expired_entries.push((key.clone(), value));
+                },
+                None => {},
+            };
+        };
+        expired_entries
     }
 }
 

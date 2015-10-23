@@ -21,7 +21,7 @@ use std::sync::mpsc::Sender;
 use crust;
 
 use routing_table::{RoutingTable, NodeInfo};
-use types::Address;
+use types::Address; 
 use authority;
 use authority::Authority;
 use id::Id;

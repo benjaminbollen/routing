@@ -56,6 +56,8 @@ pub struct RoutingNode {
     filter: ::filter::Filter,
     connection_filter: ::message_filter::MessageFilter<::NameType>,
     core: RoutingCore,
+    // pending_udp_sockets: ::utilities::ExpirationMap<u32,
+    //     ::connection_management::HolePunchingState>,
     public_id_cache: LruCache<NameType, PublicId>,
     accumulator: ::message_accumulator::MessageAccumulator,
     refresh_accumulator: ::refresh_accumulator::RefreshAccumulator,
@@ -103,6 +105,8 @@ impl RoutingNode {
             connection_filter: ::message_filter::MessageFilter::with_expiry_duration(
                 ::time::Duration::seconds(20)),
             core: core,
+            // pending_udp_sockets: ::utilities::ExpirationMap::with_expiry_duration(
+            //     ::time::Duration::minutes(2)),
             public_id_cache: LruCache::with_expiry_duration(::time::Duration::minutes(10)),
             accumulator: ::message_accumulator::MessageAccumulator::with_expiry_duration(
                 ::time::Duration::minutes(5)),
@@ -1357,10 +1361,24 @@ impl RoutingNode {
             None => None,
         }
     }
+
+    //------------ UDP Hole Punching --------------------------------------------------------------
+
+    // fn new_udp_socket(&mut self, name: ::NameType) {
+    //     let _ = self.pending_udp_sockets.insert(name);
+    // }
+
+    // fn assign_udp_socket(&mut self, name: ::NameType, udp_socket: ::) {
+    //
+    // }
+
 }
+//-------------------------------------------------------------------------------------------------
 
 fn ignore<R, E>(_result: Result<R, E>) {
 }
+
+//-------------------------------------------------------------------------------------------------
 
 #[cfg(test)]
 mod test {

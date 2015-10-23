@@ -34,7 +34,7 @@ pub enum HolePunchingState {
 
 #[cfg(test)]
 mod test {
-    
+
     #[test]
     fn hole_punching_state() {
         let name: ::name_type::NameType = ::test_utils::Random::generate_random();
