@@ -59,6 +59,7 @@ pub struct RoutingNode {
     core: RoutingCore,
     pending_udp_sockets: ::utilities::ExpirationMap<u32,
         ::connection_management::HolePunchingState>,
+    pending_udp_sockets_counter: u32,
     public_id_cache: LruCache<NameType, PublicId>,
     accumulator: ::message_accumulator::MessageAccumulator,
     refresh_accumulator: ::refresh_accumulator::RefreshAccumulator,
@@ -109,6 +110,7 @@ impl RoutingNode {
             core: core,
             pending_udp_sockets: ::utilities::ExpirationMap::with_expiry_duration(
                 ::time::Duration::minutes(2)),
+            pending_udp_sockets_counter: 0u32,
             public_id_cache: LruCache::with_expiry_duration(::time::Duration::minutes(10)),
             accumulator: ::message_accumulator::MessageAccumulator::with_expiry_duration(
                 ::time::Duration::minutes(5)),
@@ -1237,10 +1239,11 @@ impl RoutingNode {
 
     #[allow(unused)]
     fn new_udp_socket(&mut self, name: ::NameType) {
-        let new_identifier = 0u32;
-        let _ = self.pending_udp_sockets.insert(new_identifier,
+        let new_identifier = self.pending_udp_sockets_counter.clone();
+        self.pending_udp_sockets_counter = new_identifier.wrapping_add(1u32);
+        let _ = self.pending_udp_sockets.insert(new_identifier.clone(),
             ::connection_management::HolePunchingState::Mapping(name));
-
+        self.crust_service.get_mapped_udp_socket(new_identifier);
     }
 
     // fn assign_udp_socket(&mut self, name: ::NameType, udp_socket: ::) {
